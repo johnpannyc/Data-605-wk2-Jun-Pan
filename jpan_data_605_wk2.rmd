@@ -1,0 +1,139 @@
+---
+title: "data 605 wk2 assignment"
+author: "Jun Pan"
+date: "February 9, 2019"
+output: html_document
+---
+
+1. Problem set 1
+(1) Show that AT A 6= AAT
+in general. (Proof and demonstration.)
+#demonstration
+```{r}
+A <- matrix(c(1,2,1,4,0,-1,3,1,-2), nrow=3, byrow=TRUE)
+At <- t(A)
+```
+# Consider matrix A
+```{r}
+A
+```
+
+# Its transpose At
+```{r}
+At
+```
+# Multiplying A by its transpose At
+```{r}
+A %*% At
+```
+# Multiplying transposed A by A 
+```{r}
+At %*% A
+```
+# Check using logical comparison
+```{r}
+A %*% At == At %*% A
+```
+
+(2) For a special type of square matrix A, we get AT A = AAT
+. Under what conditions
+could this be true? (Hint: The Identity matrix I is an example of such a matrix).
+Please typeset your response using LaTeX mode in RStudio. If you do it in paper, please
+either scan or take a picture of the work and submit it. Please ensure that your image is
+legible and that your submissions are named using your first initial, last name, assignment
+and problem set within the assignment. E.g. LFulton_Assignment2_PS1.png
+
+#If a matrix is symmetrical along the diagonal. This is true because a symmetric matrix and its transpose are equal, meaning you are just multiplying a matrix by itself. If a matrix is symmetrical along the diagonal
+
+#demonstration
+
+```{r}
+A <- matrix(c(1,3,0,3,1,0,0,0,1), nrow=3, byrow=TRUE)
+```
+# matrix A
+```{r}
+A
+```
+# its transpose is the same matrix
+```{r}
+t(A)
+```
+
+```{r}
+A == t(A)
+```
+
+```{r}
+(A %*% t(A)) == (t(A) %*% A)
+```
+
+
+
+2. Problem set 2
+Matrix factorization is a very important problem. There are supercomputers built just
+to do matrix factorizations. Every second you are on an airplane, matrices are being
+factorized. Radars that track flights use a technique called Kalman filtering. At the heart
+of Kalman Filtering is a Matrix Factorization operation. Kalman Filters are solving linear
+systems of equations when they track your flight using radars.
+Write an R function to factorize a square matrix A into LU or LDU, whichever you
+prefer. Please submit your response in an R Markdown document using our class naming
+convention, E.g. LFulton_Assignment2_PS2.png
+You don't have to worry about permuting rows of A and you can assume that A is less
+than 5x5, if you need to hard-code any variables in your code. If you doing the entire
+assignment in R, then please submit only one markdown document for both the problems.
+
+```{r}
+factorize_LU <- function(A) {
+  # Check wheter matrix A is square
+  if (dim(A)[1]!=dim(A)[2]) {
+    return(NA)
+  }
+  
+  U <- A
+  n <- dim(A)[1]
+  L <- diag(n)
+  
+  
+  if (n==1) {
+    return(list(L,U))
+  }
+  
+  
+  for(i in 2:n) {
+    for(j in 1:(i-1)) {
+      multiplier <- -U[i,j] / U[j,j]
+      U[i, ] <- multiplier * U[j, ] + U[i, ]
+      L[i,j] <- -multiplier
+    }
+  }
+  return(list(L,U))
+}
+```
+
+#Demonstration
+
+```{r}
+A <- matrix(c(2,1,1,1,1,3,7,3,4), nrow=3, byrow=TRUE)
+LU <- factorize_LU(A)
+L<-LU[[1]]  
+U<-LU[[2]]
+
+A
+L
+U
+A == L %*% U
+```
+
+#### Example 2
+
+```{r}
+A <- matrix(c(1,3,4,7), nrow=2, byrow=TRUE)
+LU <- factorize_LU(A)
+L<-LU[[1]]  
+U<-LU[[2]]
+
+A
+L
+U
+A == L %*% U
+```
